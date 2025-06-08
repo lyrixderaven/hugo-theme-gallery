@@ -11,12 +11,16 @@
   {{ $color := index $thumbnail.Colors 0 | default "transparent" }}
   {{ $imageCount := 0 }}
   {{ $albumCount := 0 }}
-  {{ if .IsPage }}
-    {{ $imageCount = len $images }}
-  {{ else }}
-    {{ range where .RegularPagesRecursive "Params.private" "ne" true }}
-      {{ $albumCount = add $albumCount 1 }}
-      {{ $imageCount = add $imageCount (len (where (.Resources.ByType "image") "Params.hidden" "ne" true)) }}
+  {{ if ne .Layout "video" }}
+    {{ if .IsPage }}
+      {{ $imageCount = len $images }}
+    {{ else }}
+      {{ range where .RegularPagesRecursive "Params.private" "ne" true }}
+        {{ if ne .Layout "video" }}
+          {{ $albumCount = add $albumCount 1 }}
+          {{ $imageCount = add $imageCount (len (where (.Resources.ByType "image") "Params.hidden" "ne" true)) }}
+        {{ end }}
+      {{ end }}
     {{ end }}
   {{ end }}
   {{ $gallery = dict
